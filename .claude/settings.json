@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pkill -f \"next dev\")",
+      "Bash(npx shadcn@latest add dialog combobox)",
+      "Bash(xargs -I{} basename {})",
+      "Bash(npx shadcn@latest add switch)",
+      "Bash(mkdir -p \"/Users/selemorera/Documents/medicina-regenerativa/src/app/\\(app\\)/servicios/nuevo\" \"/Users/selemorera/Documents/medicina-regenerativa/src/app/\\(app\\)/servicios/[id]/editar\")",
+      "Bash(mkdir -p \"/Users/selemorera/Documents/medicina-regenerativa/src/app/\\(app\\)/calendario/horario\" \"/Users/selemorera/Documents/medicina-regenerativa/src/app/\\(app\\)/calendario/nueva\" \"/Users/selemorera/Documents/medicina-regenerativa/src/app/\\(app\\)/calendario/citas/[id]\" \"/Users/selemorera/Documents/medicina-regenerativa/src/app/api/citas\")",
+      "Bash(npm ls *)",
+      "Bash(npm view *)",
+      "Bash(curl -s -o /dev/null -w \"/agendar: %{http_code}\\\\n\" http://localhost:3000/agendar)",
+      "Bash(curl -s -o /dev/null -w \"/: %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"/cobros: %{http_code} -> %{redirect_url}\\\\n\" http://localhost:3000/cobros)",
+      "Bash(kill 17927)"
+    ],
+    "additionalDirectories": [
+      "/Users/selemorera/Documents/medicina-regenerativa/src/app/(app)/servicios/[id]",
+      "/Users/selemorera/Documents/medicina-regenerativa/src/app/(app)/calendario/citas"
+    ]
+  }
+}
