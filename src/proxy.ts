@@ -2,7 +2,13 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Rutas que cualquiera puede visitar sin haber iniciado sesión.
-const PUBLIC_ROUTES = ["/", "/login", "/agendar"];
+const PUBLIC_ROUTES = [
+  "/",
+  "/login",
+  "/agendar",
+  "/forgot-password",
+  "/reset-password",
+];
 
 function isPublicRoute(pathname: string) {
   return PUBLIC_ROUTES.some(

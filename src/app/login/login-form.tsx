@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { login } from "./actions";
@@ -44,7 +45,15 @@ export function LoginForm() {
               />
             </Field>
             <Field>
-              <FieldLabel htmlFor="contrasena">Contraseña</FieldLabel>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="contrasena">Contraseña</FieldLabel>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
               <Input
                 id="contrasena"
                 name="contrasena"
