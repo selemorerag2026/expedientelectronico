@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { origenPublico } from "@/lib/http/origen-publico";
+
 // Rutas que cualquiera puede visitar sin haber iniciado sesión.
 const PUBLIC_ROUTES = [
   "/",
@@ -50,13 +52,13 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (!user && !isPublicRoute(pathname)) {
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL("/login", origenPublico(request));
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   if (user && pathname === "/login") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard", origenPublico(request)));
   }
 
   return response;

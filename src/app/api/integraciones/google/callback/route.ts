@@ -2,12 +2,14 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { getUsuarioActual } from "@/lib/auth/usuario-actual";
 import { crearOAuthClient } from "@/lib/google-calendar/cliente";
+import { origenPublico } from "@/lib/http/origen-publico";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
+  const origen = origenPublico(request);
   const actual = await getUsuarioActual();
   if (actual?.perfil?.role !== "medico") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard", origen));
   }
 
   const code = request.nextUrl.searchParams.get("code");
@@ -15,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   if (errorParam || !code) {
     return NextResponse.redirect(
-      new URL("/configuracion?google=error", request.url)
+      new URL("/configuracion?google=error", origen)
     );
   }
 
@@ -29,7 +31,7 @@ export async function GET(request: NextRequest) {
       // consentimiento de nuevo. Con prompt=consent en /iniciar no debería
       // pasar, pero lo cubrimos igual.
       return NextResponse.redirect(
-        new URL("/configuracion?google=sin_refresh_token", request.url)
+        new URL("/configuracion?google=sin_refresh_token", origen)
       );
     }
 
@@ -47,16 +49,16 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       return NextResponse.redirect(
-        new URL("/configuracion?google=error", request.url)
+        new URL("/configuracion?google=error", origen)
       );
     }
 
     return NextResponse.redirect(
-      new URL("/configuracion?google=conectado", request.url)
+      new URL("/configuracion?google=conectado", origen)
     );
   } catch {
     return NextResponse.redirect(
-      new URL("/configuracion?google=error", request.url)
+      new URL("/configuracion?google=error", origen)
     );
   }
 }

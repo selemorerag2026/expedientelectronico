@@ -6,16 +6,18 @@ import {
   googleCalendarConfigurado,
   SCOPES_GOOGLE_CALENDAR,
 } from "@/lib/google-calendar/cliente";
+import { origenPublico } from "@/lib/http/origen-publico";
 
 export async function GET(request: NextRequest) {
+  const origen = origenPublico(request);
   const actual = await getUsuarioActual();
   if (actual?.perfil?.role !== "medico") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard", origen));
   }
 
   if (!googleCalendarConfigurado()) {
     return NextResponse.redirect(
-      new URL("/configuracion?google=no_configurado", request.url)
+      new URL("/configuracion?google=no_configurado", origen)
     );
   }
 
