@@ -85,7 +85,10 @@ export default async function DashboardPage() {
       .from("pacientes")
       .select("id", { count: "exact", head: true })
       .eq("estado", "activo"),
-    supabase.from("cobros").select("monto").eq("estado", "pendiente"),
+    supabase
+      .from("cobros_con_estado")
+      .select("saldo")
+      .neq("estado_calculado", "pagado"),
     supabase
       .from("citas")
       .select("*, pacientes(id, nombre_completo, telefono)")
@@ -99,7 +102,7 @@ export default async function DashboardPage() {
   const notasIncompletas = notasIncompletasRaw as NotaIncompleta[] | null;
 
   const totalCobrosPendientes = (cobros ?? []).reduce(
-    (suma, c) => suma + c.monto,
+    (suma, c) => suma + c.saldo,
     0
   );
 

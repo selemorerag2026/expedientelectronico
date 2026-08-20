@@ -210,22 +210,45 @@ export type CitaServicio = {
 };
 
 export type MetodoPago = "efectivo" | "tarjeta" | "transferencia" | "sinpe" | "otro";
-export type EstadoCobro = "pagado" | "pendiente";
 
+// El monto total adeudado. El estado de pago ya no es una columna fija —
+// se calcula a partir de la suma de "pagos" (ver cobros_con_estado / Pago).
 export type Cobro = {
   id: string;
   cita_id: string | null;
   paciente_id: string;
   monto: number;
-  metodo_pago: MetodoPago | null;
-  estado: EstadoCobro;
-  fecha_pago: string | null;
   notas: string | null;
   registrado_por: string | null;
   created_at: string;
   updated_at: string;
 };
 
-export type CobroConPaciente = Cobro & {
+export type EstadoCobroCalculado = "pendiente" | "parcial" | "pagado";
+
+// Fila de la vista public.cobros_con_estado (cobros + estado calculado).
+export type CobroConEstado = Cobro & {
+  monto_pagado: number;
+  saldo: number;
+  estado_calculado: EstadoCobroCalculado;
+};
+
+export type CobroConPaciente = CobroConEstado & {
   pacientes: Pick<Paciente, "id" | "nombre_completo"> | null;
+};
+
+// Un abono individual contra un cobro (puede haber varios por cobro).
+export type Pago = {
+  id: string;
+  cobro_id: string;
+  monto: number;
+  metodo_pago: MetodoPago;
+  fecha_pago: string;
+  notas: string | null;
+  registrado_por: string | null;
+  anulado: boolean;
+  anulado_por: string | null;
+  anulado_en: string | null;
+  motivo_anulacion: string | null;
+  created_at: string;
 };

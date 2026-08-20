@@ -1,20 +1,10 @@
 import * as z from "zod";
 
+// Un "cobro" ahora solo representa el monto total adeudado. El pago
+// (parcial o completo) se registra aparte, ver src/lib/validations/pago.ts.
 export const CobroSchema = z.object({
-  monto: z.number().min(0, { error: "El monto no puede ser negativo." }),
-  metodo_pago: z
-    .enum(["efectivo", "tarjeta", "transferencia", "sinpe", "otro"])
-    .optional(),
-  estado: z.enum(["pagado", "pendiente"]),
+  monto: z.number().min(0.01, { error: "El monto debe ser mayor a cero." }),
   notas: z.string().trim().optional(),
 });
 
 export type CobroFormValues = z.infer<typeof CobroSchema>;
-
-export const METODOS_PAGO = [
-  { value: "efectivo", label: "Efectivo" },
-  { value: "tarjeta", label: "Tarjeta" },
-  { value: "transferencia", label: "Transferencia" },
-  { value: "sinpe", label: "SINPE" },
-  { value: "otro", label: "Otro" },
-] as const;

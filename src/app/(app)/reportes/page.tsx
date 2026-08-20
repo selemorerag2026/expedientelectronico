@@ -50,7 +50,7 @@ export default async function ReportesPage({
   const [
     { data: pacientesNuevos },
     { data: notas },
-    { data: cobrosPagados },
+    { data: pagosDelRango },
     { data: cobrosPendientes },
   ] = await Promise.all([
     supabase
@@ -63,16 +63,18 @@ export default async function ReportesPage({
       .select("diagnosticos")
       .gte("fecha", inicioRango)
       .lte("fecha", finRango),
+    // Ingresos = dinero efectivamente recibido en el rango (abonos, no
+    // el monto total del cobro), para reflejar bien los pagos parciales.
     supabase
-      .from("cobros")
+      .from("pagos")
       .select("monto")
-      .eq("estado", "pagado")
-      .gte("fecha_pago", inicioRango)
-      .lte("fecha_pago", finRango),
+      .eq("anulado", false)
+      .gte("fecha_pago", desde)
+      .lte("fecha_pago", hasta),
     supabase
-      .from("cobros")
-      .select("monto")
-      .eq("estado", "pendiente")
+      .from("cobros_con_estado")
+      .select("saldo")
+      .neq("estado_calculado", "pagado")
       .gte("created_at", inicioRango)
       .lte("created_at", finRango),
   ]);
@@ -105,12 +107,12 @@ export default async function ReportesPage({
     .map(([etiqueta, valor]) => ({ etiqueta, valor }));
 
   // Ingresos
-  const totalIngresos = (cobrosPagados ?? []).reduce(
-    (suma, c) => suma + c.monto,
+  const totalIngresos = (pagosDelRango ?? []).reduce(
+    (suma, p) => suma + p.monto,
     0
   );
   const totalPendiente = (cobrosPendientes ?? []).reduce(
-    (suma, c) => suma + c.monto,
+    (suma, c) => suma + c.saldo,
     0
   );
 

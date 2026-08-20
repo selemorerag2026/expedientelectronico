@@ -19,25 +19,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  BADGE_VARIANT_ESTADO_COBRO,
+  ESTADOS_COBRO,
+  ETIQUETA_ESTADO_COBRO,
+} from "@/lib/cobros/color-estado-cobro";
 import { combinarFechaHoraCR, formatearFechaHora } from "@/lib/fecha";
 import { createClient } from "@/lib/supabase/server";
-import type { CobroConPaciente } from "@/lib/types/database";
+import type { CobroConPaciente, EstadoCobroCalculado } from "@/lib/types/database";
 
 export default async function CobrosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ desde?: string; hasta?: string; q?: string }>;
+  searchParams: Promise<{
+    desde?: string;
+    hasta?: string;
+    q?: string;
+    estado?: EstadoCobroCalculado;
+  }>;
 }) {
-  const { desde, hasta, q } = await searchParams;
+  const { desde, hasta, q, estado } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
-    .from("cobros")
+    .from("cobros_con_estado")
     .select("*, pacientes(id, nombre_completo)")
     .order("created_at", { ascending: false });
 
   if (desde) query = query.gte("created_at", combinarFechaHoraCR(desde, "00:00"));
   if (hasta) query = query.lte("created_at", combinarFechaHoraCR(hasta, "23:59"));
+  if (estado) query = query.eq("estado_calculado", estado);
 
   if (q) {
     const { data: pacientesCoincidentes } = await supabase
@@ -50,12 +61,13 @@ export default async function CobrosPage({
 
   const { data: cobros } = await query.returns<CobroConPaciente[]>();
 
-  const totalCobrado = (cobros ?? [])
-    .filter((c) => c.estado === "pagado")
-    .reduce((suma, c) => suma + c.monto, 0);
+  const totalCobrado = (cobros ?? []).reduce(
+    (suma, c) => suma + c.monto_pagado,
+    0
+  );
   const totalPendiente = (cobros ?? [])
-    .filter((c) => c.estado === "pendiente")
-    .reduce((suma, c) => suma + c.monto, 0);
+    .filter((c) => c.estado_calculado !== "pagado")
+    .reduce((suma, c) => suma + c.saldo, 0);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-6">
@@ -80,10 +92,28 @@ export default async function CobrosPage({
           </label>
           <Input id="q" name="q" defaultValue={q} className="w-64" />
         </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="estado" className="text-xs text-muted-foreground">
+            Estado
+          </label>
+          <select
+            id="estado"
+            name="estado"
+            defaultValue={estado ?? ""}
+            className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+          >
+            <option value="">Todos</option>
+            {ESTADOS_COBRO.map((e) => (
+              <option key={e.value} value={e.value}>
+                {e.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <Button type="submit" variant="outline">
           Filtrar
         </Button>
-        {(desde || hasta || q) && (
+        {(desde || hasta || q || estado) && (
           <Button variant="ghost" render={<Link href="/cobros" />}>
             Limpiar
           </Button>
@@ -101,7 +131,7 @@ export default async function CobrosPage({
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Total pendiente</CardTitle>
+            <CardTitle>Saldo pendiente</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-medium">
             ₡{totalPendiente.toLocaleString("es-CR")}
@@ -116,8 +146,9 @@ export default async function CobrosPage({
               <TableHead>Fecha</TableHead>
               <TableHead>Paciente</TableHead>
               <TableHead>Monto</TableHead>
-              <TableHead>Método</TableHead>
+              <TableHead>Saldo</TableHead>
               <TableHead>Estado</TableHead>
+              <TableHead />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -137,17 +168,26 @@ export default async function CobrosPage({
                   )}
                 </TableCell>
                 <TableCell>₡{cobro.monto.toLocaleString("es-CR")}</TableCell>
-                <TableCell>{cobro.metodo_pago ?? "—"}</TableCell>
+                <TableCell>₡{cobro.saldo.toLocaleString("es-CR")}</TableCell>
                 <TableCell>
-                  <Badge variant={cobro.estado === "pagado" ? "default" : "secondary"}>
-                    {cobro.estado}
+                  <Badge variant={BADGE_VARIANT_ESTADO_COBRO[cobro.estado_calculado]}>
+                    {ETIQUETA_ESTADO_COBRO[cobro.estado_calculado]}
                   </Badge>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    render={<Link href={`/cobros/${cobro.id}`} />}
+                  >
+                    {cobro.estado_calculado === "pagado" ? "Ver" : "Registrar pago"}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
             {cobros?.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5}>
+                <TableCell colSpan={6}>
                   <EstadoVacio
                     icon={WalletIcon}
                     titulo="No hay cobros registrados"

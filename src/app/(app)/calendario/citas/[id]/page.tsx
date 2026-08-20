@@ -12,12 +12,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { crearCobro, marcarCobroPagado } from "@/app/(app)/cobros/actions";
+import { crearCobro } from "@/app/(app)/cobros/actions";
+import {
+  BADGE_VARIANT_ESTADO_COBRO,
+  ETIQUETA_ESTADO_COBRO,
+} from "@/lib/cobros/color-estado-cobro";
 import { getUsuarioActual } from "@/lib/auth/usuario-actual";
 import { formatearFechaHora, partesEnCR } from "@/lib/fecha";
 import { createClient } from "@/lib/supabase/server";
 import type {
-  Cobro,
+  CobroConEstado,
   CitaConPaciente,
   CitaServicio,
   Servicio,
@@ -51,11 +55,11 @@ export default async function CitaDetallePage({
     .returns<(CitaServicio & { servicios: Pick<Servicio, "nombre"> | null })[]>();
 
   const { data: cobros } = await supabase
-    .from("cobros")
+    .from("cobros_con_estado")
     .select("*")
     .eq("cita_id", id)
     .order("created_at", { ascending: false })
-    .returns<Cobro[]>();
+    .returns<CobroConEstado[]>();
 
   const guardarCobro = crearCobro.bind(null, id, cita.paciente_id);
 
@@ -141,22 +145,22 @@ export default async function CitaDetallePage({
                     <span className="font-medium">
                       ₡{cobro.monto.toLocaleString("es-CR")}
                     </span>
-                    {cobro.metodo_pago && (
+                    {cobro.estado_calculado !== "pagado" && (
                       <span className="text-muted-foreground">
-                        · {cobro.metodo_pago}
+                        · saldo ₡{cobro.saldo.toLocaleString("es-CR")}
                       </span>
                     )}
-                    <Badge variant={cobro.estado === "pagado" ? "default" : "secondary"}>
-                      {cobro.estado}
+                    <Badge variant={BADGE_VARIANT_ESTADO_COBRO[cobro.estado_calculado]}>
+                      {ETIQUETA_ESTADO_COBRO[cobro.estado_calculado]}
                     </Badge>
                   </div>
-                  {cobro.estado === "pendiente" && (
-                    <form action={marcarCobroPagado.bind(null, cobro.id, id)}>
-                      <Button type="submit" variant="outline" size="sm">
-                        Marcar pagado
-                      </Button>
-                    </form>
-                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    render={<Link href={`/cobros/${cobro.id}`} />}
+                  >
+                    {cobro.estado_calculado === "pagado" ? "Ver" : "Registrar pago"}
+                  </Button>
                 </div>
               ))}
             </div>

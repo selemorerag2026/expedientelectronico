@@ -2,26 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { CobroActionState } from "@/app/(app)/cobros/actions";
-import {
-  CobroSchema,
-  METODOS_PAGO,
-  type CobroFormValues,
-} from "@/lib/validations/cobro";
+import { CobroSchema, type CobroFormValues } from "@/lib/validations/cobro";
 
 export function CobroForm({
   onSubmit,
@@ -31,13 +20,12 @@ export function CobroForm({
   const router = useRouter();
   const {
     register,
-    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<CobroFormValues>({
     resolver: zodResolver(CobroSchema),
-    defaultValues: { monto: 0, estado: "pendiente", notas: "" },
+    defaultValues: { monto: 0, notas: "" },
   });
 
   async function alEnviar(data: CobroFormValues) {
@@ -47,16 +35,16 @@ export function CobroForm({
       return;
     }
     toast.success("Cobro registrado.");
-    reset({ monto: 0, estado: "pendiente", notas: "" });
+    reset({ monto: 0, notas: "" });
     router.refresh();
   }
 
   return (
     <form onSubmit={handleSubmit(alEnviar)} className="flex flex-col gap-3">
       <FieldGroup>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field>
-            <FieldLabel htmlFor="monto">Monto</FieldLabel>
+            <FieldLabel htmlFor="monto">Monto total adeudado</FieldLabel>
             <Input
               id="monto"
               type="number"
@@ -66,45 +54,6 @@ export function CobroForm({
             {errors.monto && (
               <p className="text-sm text-destructive">{errors.monto.message}</p>
             )}
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="metodo_pago">Método de pago</FieldLabel>
-            <Controller
-              control={control}
-              name="metodo_pago"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger id="metodo_pago" className="w-full">
-                    <SelectValue placeholder="Selecciona" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {METODOS_PAGO.map((m) => (
-                      <SelectItem key={m.value} value={m.value}>
-                        {m.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="estado">Estado</FieldLabel>
-            <Controller
-              control={control}
-              name="estado"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger id="estado" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pendiente">Pendiente</SelectItem>
-                    <SelectItem value="pagado">Pagado</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
           </Field>
         </div>
         <Field>
