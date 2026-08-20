@@ -175,3 +175,159 @@
 .app-gradient-bg {
   background: var(--app-gradient);
 }
+
+/* Animación de marca: entrada al login y transición hacia el consultorio. */
+@keyframes acceso-entra {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes acceso-sube {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes acceso-sale {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.985);
+  }
+}
+
+@keyframes lateral-entra {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes contenido-entra {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes halo {
+  from {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+@keyframes barrido {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.acceso-marca {
+  animation: acceso-entra 340ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.acceso-card {
+  animation: acceso-entra 380ms cubic-bezier(0.4, 0, 0.2, 1) 100ms both;
+}
+
+.acceso-header {
+  animation: acceso-sube 320ms cubic-bezier(0.4, 0, 0.2, 1) 220ms both;
+}
+
+.acceso-campo-correo {
+  animation: acceso-sube 320ms cubic-bezier(0.4, 0, 0.2, 1) 290ms both;
+}
+
+.acceso-campo-contrasena {
+  animation: acceso-sube 320ms cubic-bezier(0.4, 0, 0.2, 1) 350ms both;
+}
+
+.acceso-boton {
+  animation: acceso-sube 320ms cubic-bezier(0.4, 0, 0.2, 1) 410ms both;
+}
+
+.acceso-sale {
+  animation: acceso-sale 280ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+.acceso-halo {
+  animation: halo 1.4s cubic-bezier(0.4, 0, 0.2, 1) 500ms 1 both;
+  pointer-events: none;
+}
+
+.shell-sidebar {
+  animation: lateral-entra 420ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.shell-header {
+  animation: contenido-entra 340ms cubic-bezier(0.4, 0, 0.2, 1) 120ms both;
+}
+
+.shell-main {
+  animation: contenido-entra 380ms cubic-bezier(0.4, 0, 0.2, 1) 190ms both;
+}
+
+.boton-cargando {
+  position: relative;
+  overflow: hidden;
+}
+
+.boton-cargando::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: barrido 900ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acceso-marca,
+  .acceso-card,
+  .acceso-header,
+  .acceso-campo-correo,
+  .acceso-campo-contrasena,
+  .acceso-boton,
+  .acceso-sale,
+  .acceso-halo,
+  .shell-sidebar,
+  .shell-header,
+  .shell-main,
+  .boton-cargando::after {
+    animation: none !important;
+  }
+}

@@ -16,6 +16,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Inicio", icon: LayoutDashboardIcon },
@@ -41,15 +42,22 @@ export function AppSidebar({
   nombre,
   rol,
   onLogout,
+  className,
 }: {
   nombre: string;
   rol: string;
   onLogout: () => void;
+  className?: string;
 }) {
   const pathname = usePathname();
 
   return (
-    <aside className="m-3 flex w-16 shrink-0 flex-col gap-2 rounded-3xl bg-sidebar p-2.5 shadow-[0_2px_24px_-4px_rgba(108,92,224,0.15)] ring-1 ring-black/5 sm:m-4 sm:w-64 sm:p-4">
+    <aside
+      className={cn(
+        "m-3 flex w-16 shrink-0 flex-col gap-2 rounded-3xl bg-sidebar p-2.5 shadow-[0_2px_24px_-4px_rgba(108,92,224,0.15)] ring-1 ring-black/5 sm:m-4 sm:w-64 sm:p-4",
+        className
+      )}
+    >
       <div className="flex items-center gap-2 px-1 py-2 sm:px-2">
         <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
           <StethoscopeIcon className="size-4.5" />

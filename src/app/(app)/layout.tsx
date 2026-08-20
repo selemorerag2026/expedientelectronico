@@ -21,15 +21,16 @@ export default async function AppLayout({
   return (
     <div className="app-gradient-bg flex min-h-full flex-1">
       <AppSidebar
+        className="shell-sidebar"
         nombre={perfil?.nombre_completo ?? user.email ?? "Usuario"}
         rol={perfil?.role ?? "sin rol"}
         onLogout={logout}
       />
       <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
-        <header className="flex items-center px-3 py-3 sm:px-4">
+        <header className="shell-header flex items-center px-3 py-3 sm:px-4">
           <BusquedaGlobal />
         </header>
-        <main className="flex flex-1 flex-col">{children}</main>
+        <main className="shell-main flex flex-1 flex-col">{children}</main>
       </div>
     </div>
   );
