@@ -25,7 +25,7 @@ export function CobroForm({
     formState: { errors, isSubmitting },
   } = useForm<CobroFormValues>({
     resolver: zodResolver(CobroSchema),
-    defaultValues: { monto: 0, notas: "" },
+    defaultValues: { monto: 0, fecha_vencimiento: "", notas: "" },
   });
 
   async function alEnviar(data: CobroFormValues) {
@@ -35,7 +35,7 @@ export function CobroForm({
       return;
     }
     toast.success("Cobro registrado.");
-    reset({ monto: 0, notas: "" });
+    reset({ monto: 0, fecha_vencimiento: "", notas: "" });
     router.refresh();
   }
 
@@ -54,6 +54,16 @@ export function CobroForm({
             {errors.monto && (
               <p className="text-sm text-destructive">{errors.monto.message}</p>
             )}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="fecha_vencimiento">
+              Fecha de vencimiento (opcional)
+            </FieldLabel>
+            <Input
+              id="fecha_vencimiento"
+              type="date"
+              {...register("fecha_vencimiento")}
+            />
           </Field>
         </div>
         <Field>

@@ -32,6 +32,7 @@ export async function crearCobro(
     cita_id: citaId,
     paciente_id: pacienteId,
     monto: validado.data.monto,
+    fecha_vencimiento: validado.data.fecha_vencimiento || null,
     notas: validado.data.notas || null,
     registrado_por: user?.id,
   });

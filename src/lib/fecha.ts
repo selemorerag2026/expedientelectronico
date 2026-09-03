@@ -50,6 +50,26 @@ export function formatearFecha(fecha: string): string {
   return `${dia} de ${MESES[mes - 1]} de ${anio}`;
 }
 
+const DIAS = [
+  "domingo",
+  "lunes",
+  "martes",
+  "miércoles",
+  "jueves",
+  "viernes",
+  "sábado",
+];
+
+// Igual que formatearFecha() pero con el día de la semana al frente (para el
+// saludo del dashboard). Mismo truco de offset fijo -06:00 que
+// combinarFechaHoraCR, por la misma razón: Costa Rica no tiene horario de
+// verano, así que no hace falta resolverlo contra una zona horaria real.
+export function formatearFechaLarga(fecha: string): string {
+  const { anio, mes, dia } = partesFecha(fecha);
+  const diaSemana = DIAS[new Date(`${fecha}T12:00:00-06:00`).getUTCDay()];
+  return `${diaSemana} ${dia} de ${MESES[mes - 1]} de ${anio}`;
+}
+
 // Para timestamptz de Postgres (traen offset, ej. "2026-08-02T20:30:00+00:00").
 export function formatearFechaHora(fecha: string): string {
   return new Intl.DateTimeFormat("es-CR", {

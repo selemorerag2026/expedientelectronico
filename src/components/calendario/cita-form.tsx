@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { TIPOS_CITA } from "@/lib/citas/color-tipo";
 import type { Servicio } from "@/lib/types/database";
 import { CitaSchema, type CitaFormValues } from "@/lib/validations/cita";
 import type { CitaActionState } from "@/app/(app)/calendario/actions";
@@ -44,6 +45,7 @@ export function CitaForm({
     defaultValues: {
       paciente_id: pacienteInicial?.id ?? "",
       servicio_id: "",
+      tipo_cita: "consulta",
       fecha: defaultFecha ?? "",
       hora: defaultHora ?? "",
       duracion_minutos: 30,
@@ -122,6 +124,28 @@ export function CitaForm({
               {errors.servicio_id.message}
             </p>
           )}
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="tipo_cita">Tipo de cita</FieldLabel>
+          <Controller
+            control={control}
+            name="tipo_cita"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger id="tipo_cita" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIPOS_CITA.map((t) => (
+                    <SelectItem key={t.value} value={t.value}>
+                      {t.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
         </Field>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

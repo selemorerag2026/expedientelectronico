@@ -4,6 +4,7 @@ import * as z from "zod";
 // (parcial o completo) se registra aparte, ver src/lib/validations/pago.ts.
 export const CobroSchema = z.object({
   monto: z.number().min(0.01, { error: "El monto debe ser mayor a cero." }),
+  fecha_vencimiento: z.string().trim().optional(),
   notas: z.string().trim().optional(),
 });
 

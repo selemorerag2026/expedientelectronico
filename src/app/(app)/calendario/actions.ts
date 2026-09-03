@@ -12,6 +12,7 @@ import {
 } from "@/lib/google-calendar/sincronizacion";
 import { enviarCorreoCitaConfirmada } from "@/lib/notificaciones/correo-cita-confirmada";
 import { registrarErrorIntegracion } from "@/lib/notificaciones/registrar-error-integracion";
+import { enviarWhatsAppCitaConfirmada } from "@/lib/notificaciones/whatsapp-cita-confirmada";
 import { createClient } from "@/lib/supabase/server";
 import type { EstadoCita } from "@/lib/types/database";
 import {
@@ -114,6 +115,7 @@ export async function crearCita(
     .insert({
       paciente_id: validado.data.paciente_id,
       medico_id: medicoId,
+      tipo_cita: validado.data.tipo_cita,
       fecha_hora_inicio: inicio,
       fecha_hora_fin: fin,
       notas_administrativas: validado.data.notas_administrativas || null,
@@ -209,9 +211,14 @@ export async function cambiarEstadoCita(id: string, estado: EstadoCita) {
     citaPrevia.estado !== "cancelada" && estado === "cancelada";
 
   if (seAcabaDeConfirmar) {
-    // Google Calendar: cualquier cita confirmada, sin importar el origen.
+    // Google Calendar y WhatsApp al paciente: cualquier cita confirmada,
+    // sin importar el origen (el paciente quiere el aviso igual si la cita
+    // la agendó el personal por teléfono que si la agendó él mismo).
     await sincronizarGoogleCalendarAlConfirmar(id, citaPrevia);
-    // Correo al médico: solo citas que vinieron del portal público.
+    await notificarCitaConfirmadaPorWhatsApp(id, citaPrevia);
+    // Correo al médico: solo citas que vinieron del portal público (es un
+    // aviso interno de "se confirmó una autoagendada", no algo para el
+    // personal que ya sabe que agendó la cita).
     if (citaPrevia.origen === "portal_publico") {
       await notificarCitaConfirmadaPorCorreo(id, citaPrevia);
     }
@@ -338,6 +345,53 @@ async function notificarCitaConfirmadaPorCorreo(
       citaId,
       pacienteId: citaPrevia.paciente_id,
       evento: "correo_cita_confirmada",
+      error: resultado.error ?? "Error desconocido.",
+    });
+  }
+}
+
+async function notificarCitaConfirmadaPorWhatsApp(
+  citaId: string,
+  citaPrevia: {
+    paciente_id: string;
+    fecha_hora_inicio: string;
+    fecha_hora_fin: string;
+  }
+) {
+  const supabase = await createClient();
+
+  const [{ data: paciente }, { data: citaServicios }, { data: medicoNombre }] =
+    await Promise.all([
+      supabase
+        .from("pacientes")
+        .select("nombre_completo, telefono")
+        .eq("id", citaPrevia.paciente_id)
+        .single(),
+      supabase
+        .from("citas_servicios")
+        .select("servicios(nombre)")
+        .eq("cita_id", citaId),
+      supabase.rpc("medico_por_defecto_nombre"),
+    ]);
+
+  const nombreServicio =
+    (citaServicios?.[0]?.servicios as { nombre?: string } | null)?.nombre ??
+    null;
+
+  const resultado = await enviarWhatsAppCitaConfirmada({
+    pacienteTelefono: paciente?.telefono ?? null,
+    pacienteNombre: paciente?.nombre_completo ?? "Paciente",
+    medicoNombre: (medicoNombre as unknown as string) ?? "tu médico",
+    servicioNombre: nombreServicio,
+    fechaHoraInicio: citaPrevia.fecha_hora_inicio,
+    fechaHoraFin: citaPrevia.fecha_hora_fin,
+  });
+
+  if (!resultado.ok) {
+    await registrarErrorIntegracion({
+      citaId,
+      pacienteId: citaPrevia.paciente_id,
+      evento: "whatsapp_cita_confirmada",
       error: resultado.error ?? "Error desconocido.",
     });
   }

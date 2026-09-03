@@ -13,10 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  BADGE_VARIANT_ESTADO_COBRO,
-  ETIQUETA_ESTADO_COBRO,
-} from "@/lib/cobros/color-estado-cobro";
+import { estadoVisualCobro } from "@/lib/cobros/color-estado-cobro";
 import { formatearFecha } from "@/lib/fecha";
 import { getUsuarioActual } from "@/lib/auth/usuario-actual";
 import { createClient } from "@/lib/supabase/server";
@@ -64,6 +61,7 @@ export default async function CobroDetallePage({
   ]);
 
   const registrarPago = crearPago.bind(null, cobro.id, cobro.cita_id);
+  const visualEstado = estadoVisualCobro(cobro);
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -99,9 +97,7 @@ export default async function CobroDetallePage({
           <CardHeader>
             <CardDescription>Estado</CardDescription>
             <CardTitle>
-              <Badge variant={BADGE_VARIANT_ESTADO_COBRO[cobro.estado_calculado]}>
-                {ETIQUETA_ESTADO_COBRO[cobro.estado_calculado]}
-              </Badge>
+              <Badge variant={visualEstado.variant}>{visualEstado.label}</Badge>
             </CardTitle>
           </CardHeader>
         </Card>

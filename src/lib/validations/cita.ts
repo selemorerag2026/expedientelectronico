@@ -3,6 +3,9 @@ import * as z from "zod";
 export const CitaSchema = z.object({
   paciente_id: z.uuid({ error: "Selecciona un paciente." }),
   servicio_id: z.uuid({ error: "Selecciona un servicio." }),
+  tipo_cita: z.enum(["consulta", "primera_vez", "procedimiento"], {
+    error: "Selecciona el tipo de cita.",
+  }),
   fecha: z.string().min(1, { error: "Ingresa la fecha." }),
   hora: z.string().min(1, { error: "Ingresa la hora." }),
   duracion_minutos: z

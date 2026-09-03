@@ -130,9 +130,20 @@ export type NotaEvolucion = {
   updated_at: string;
 };
 
+export type CategoriaDocumento =
+  | "laboratorio"
+  | "imagen"
+  | "receta"
+  | "consentimiento"
+  | "otro";
+
 export type ArchivoAdjunto = {
   id: string;
-  nota_evolucion_id: string;
+  nota_evolucion_id: string | null;
+  // Solo en adjuntos subidos directo al expediente (pestaña Documentos),
+  // sin pasar por una nota de evolución. Null en los adjuntos antiguos.
+  paciente_id: string | null;
+  categoria: CategoriaDocumento | null;
   nombre_archivo: string;
   ruta_storage: string;
   tipo_archivo: string | null;
@@ -180,6 +191,8 @@ export type EstadoCita =
   | "no_show";
 export type OrigenCita = "interno" | "portal_publico";
 
+export type TipoCita = "consulta" | "primera_vez" | "procedimiento";
+
 export type Cita = {
   id: string;
   paciente_id: string;
@@ -188,12 +201,20 @@ export type Cita = {
   fecha_hora_fin: string;
   estado: EstadoCita;
   origen: OrigenCita;
+  tipo_cita: TipoCita;
   confirmada_por_paciente: boolean;
   notas_administrativas: string | null;
   google_event_id: string | null;
   creado_por: string | null;
   created_at: string;
   updated_at: string;
+};
+
+// Fila de la vista public.pacientes_con_citas (Parte 14).
+export type PacienteConCitas = {
+  paciente_id: string;
+  ultima_visita: string | null;
+  proxima_cita: string | null;
 };
 
 export type CitaConPaciente = Cita & {
@@ -218,6 +239,9 @@ export type Cobro = {
   cita_id: string | null;
   paciente_id: string;
   monto: number;
+  // Opcional: si no se llena, este cobro nunca cuenta como "vencido" (ver
+  // esVencido() en src/lib/cobros/color-estado-cobro.ts).
+  fecha_vencimiento: string | null;
   notas: string | null;
   registrado_por: string | null;
   created_at: string;

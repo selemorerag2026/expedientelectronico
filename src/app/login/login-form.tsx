@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { StethoscopeIcon } from "lucide-react";
@@ -27,6 +27,16 @@ export function LoginForm() {
   function alEnviar() {
     accesoRef.current?.classList.add("acceso-sale");
   }
+
+  // Si el login falla, la acción nunca navega (no hay redirect()), así que
+  // el desvanecido que se aplicó optimistamente en alEnviar() se queda
+  // puesto para siempre y esconde el formulario entero — incluido el
+  // mensaje de error. Si vuelve un error, se deshace el desvanecido.
+  useEffect(() => {
+    if (state?.error) {
+      accesoRef.current?.classList.remove("acceso-sale");
+    }
+  }, [state]);
 
   return (
     <div

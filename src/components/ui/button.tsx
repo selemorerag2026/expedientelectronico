@@ -44,12 +44,22 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  nativeButton,
+  render,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      // Cuando se usa render (ej. render={<Link .../>}) ya no se está
+      // renderizando un <button> real, así que no tiene sentido pedirle a
+      // Base UI semántica de botón nativo — eso es justo lo que Base UI
+      // avisa en consola si no se apaga. Se puede seguir pasando
+      // nativeButton explícito para el caso raro de un <button> real
+      // dentro de render.
+      nativeButton={nativeButton ?? !render}
+      render={render}
       {...props}
     />
   )

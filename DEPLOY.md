@@ -69,6 +69,9 @@ cópialos de ahí — **no los compartas ni los subas a GitHub**):
 | `GOOGLE_CLIENT_ID` | Client ID de Google Cloud Console (Fase 8E, Google Calendar) |
 | `GOOGLE_CLIENT_SECRET` | Client secret de Google Cloud Console |
 | `GOOGLE_REDIRECT_URI` | `https://TU-DOMINIO-DE-RENDER.onrender.com/api/integraciones/google/callback` — debe coincidir exacto con el "Authorized redirect URI" que registraste en Google Cloud Console |
+| `TWILIO_ACCOUNT_SID` | Tu Account SID de Twilio (Fase 8F, aviso de cita confirmada por WhatsApp) |
+| `TWILIO_AUTH_TOKEN` | Tu Auth Token de Twilio |
+| `TWILIO_WHATSAPP_NUMBER` | El número de WhatsApp de Twilio, en formato `+506XXXXXXXX` (sin el prefijo `whatsapp:`) |
 | `NODE_VERSION` | `22` |
 
 `SUPABASE_SECRET_KEY` **no hace falta** para esta app — ningún archivo del

@@ -7,9 +7,16 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-display);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-mineral: var(--mineral-500);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,115 +56,121 @@
 }
 
 :root {
-  /* Paleta de marca: violeta cálido + pasteles suaves (lavanda, rosa, durazno) */
-  --brand-purple: #6c5ce0;
-  --brand-lavender: #eeecfb;
-  --brand-pink: #f3d9e6;
-  --brand-peach: #fbe7d3;
-  --brand-ink: #201c2e;
+  /* Paleta de marca: azul-teal clínico ("Expediente CR") */
+  --teal-950: #0c2e40;
+  --teal-800: #123f58;
+  --teal-700: #1a5170;
+  --seafoam: #2e7d9e;
+  --mineral-500: #86a7b4;
+  --shell: #e5f0f3;
+  --pearl: #f5fafb;
+  --paper: #f7fafb;
+  --line: #dce6e9;
+  --mute-soft: #edf3f5;
+  --ink: #1b2a2e;
+  --ink-soft: #54666b;
+  --ink-faint: #87979c;
 
-  --background: #faf9fd;
-  --foreground: var(--brand-ink);
+  /* Estados semánticos: no cambian con la marca */
+  --success: #3f7a5d;
+  --success-foreground: #ffffff;
+  --warning: #b5883a;
+  --warning-foreground: #ffffff;
+  --danger: #b65c4a;
+  --danger-foreground: #ffffff;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
   --card: #ffffff;
-  --card-foreground: var(--brand-ink);
+  --card-foreground: var(--ink);
   --popover: #ffffff;
-  --popover-foreground: var(--brand-ink);
-  --primary: var(--brand-purple);
-  --primary-foreground: #ffffff;
-  --secondary: var(--brand-lavender);
-  --secondary-foreground: var(--brand-ink);
-  --muted: #f2f0f9;
-  --muted-foreground: #6d6580;
-  --accent: var(--brand-peach);
-  --accent-foreground: var(--brand-ink);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: #e8e4f4;
-  --input: #e8e4f4;
-  --ring: var(--brand-purple);
-  --chart-1: var(--brand-purple);
-  --chart-2: #e79fc0;
-  --chart-3: #f0b878;
-  --chart-4: #8ecae6;
-  --chart-5: #6d6580;
+  --popover-foreground: var(--ink);
+  --primary: var(--teal-800);
+  --primary-foreground: var(--pearl);
+  --secondary: var(--shell);
+  --secondary-foreground: var(--ink);
+  --muted: var(--mute-soft);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--shell);
+  --accent-foreground: var(--teal-700);
+  --destructive: var(--danger);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--seafoam);
+  --chart-1: var(--seafoam);
+  --chart-2: var(--teal-700);
+  --chart-3: var(--mineral-500);
+  --chart-4: var(--teal-950);
+  --chart-5: var(--ink-faint);
   --radius: 1rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: var(--brand-ink);
-  --sidebar-primary: var(--brand-purple);
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--brand-lavender);
-  --sidebar-accent-foreground: var(--brand-purple);
-  --sidebar-border: #e8e4f4;
-  --sidebar-ring: var(--brand-purple);
+  --sidebar: var(--teal-950);
+  --sidebar-foreground: var(--pearl);
+  --sidebar-primary: var(--seafoam);
+  --sidebar-primary-foreground: var(--pearl);
+  --sidebar-accent: color-mix(in oklch, var(--pearl), transparent 90%);
+  --sidebar-accent-foreground: var(--pearl);
+  --sidebar-border: color-mix(in oklch, var(--pearl), transparent 88%);
+  --sidebar-ring: var(--seafoam);
 
-  /* Fondo degradado suave (lavanda -> rosa -> durazno), inspirado en la referencia */
-  --app-gradient: radial-gradient(
-      at top left,
-      color-mix(in oklch, var(--brand-lavender), transparent 15%) 0%,
-      transparent 55%
-    ),
-    radial-gradient(
-      at bottom right,
-      color-mix(in oklch, var(--brand-peach), transparent 15%) 0%,
-      transparent 55%
-    ),
-    linear-gradient(
-      135deg,
-      var(--brand-lavender) 0%,
-      var(--brand-pink) 50%,
-      var(--brand-peach) 100%
-    );
+  /* Fondo general de la app: prácticamente plano, apenas un tinte frío */
+  --app-gradient: linear-gradient(180deg, var(--paper) 0%, var(--paper) 100%);
 }
 
 .dark {
-  --brand-purple: #9b8cf2;
-  --brand-lavender: #2a2440;
-  --brand-pink: #3a2836;
-  --brand-peach: #3a2c22;
-  --brand-ink: #120f1a;
+  --teal-950: #081b26;
+  --teal-800: #0f2e40;
+  --teal-700: #163c52;
+  --seafoam: #4a9dc0;
+  --mineral-500: #6f8f9c;
+  --shell: #16303b;
+  --pearl: #eef6f8;
+  --paper: #0c1b21;
+  --line: color-mix(in oklch, white, transparent 88%);
+  --mute-soft: #142832;
+  --ink: #eef6f8;
+  --ink-soft: #a8bcc1;
+  --ink-faint: #7c9298;
 
-  --background: var(--brand-ink);
-  --foreground: #f1eef9;
-  --card: #1c1829;
-  --card-foreground: #f1eef9;
-  --popover: #1c1829;
-  --popover-foreground: #f1eef9;
-  --primary: var(--brand-purple);
-  --primary-foreground: #14101f;
-  --secondary: #2a2440;
-  --secondary-foreground: #f1eef9;
-  --muted: #221d33;
-  --muted-foreground: #a79fc0;
-  --accent: var(--brand-peach);
-  --accent-foreground: #f1eef9;
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: var(--brand-purple);
-  --chart-1: var(--brand-purple);
-  --chart-2: #e79fc0;
-  --chart-3: #f0b878;
-  --chart-4: #8ecae6;
-  --chart-5: #a79fc0;
-  --sidebar: #191526;
-  --sidebar-foreground: #f1eef9;
-  --sidebar-primary: var(--brand-purple);
-  --sidebar-primary-foreground: #14101f;
-  --sidebar-accent: #2a2440;
-  --sidebar-accent-foreground: var(--brand-purple);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: var(--brand-purple);
+  --success: #5ba07d;
+  --success-foreground: #06120d;
+  --warning: #d1a25e;
+  --warning-foreground: #1f1204;
+  --danger: #d38472;
+  --danger-foreground: #1f0a05;
 
-  --app-gradient: radial-gradient(
-      at top left,
-      color-mix(in oklch, var(--brand-lavender), transparent 40%) 0%,
-      transparent 55%
-    ),
-    radial-gradient(
-      at bottom right,
-      color-mix(in oklch, var(--brand-peach), transparent 40%) 0%,
-      transparent 55%
-    ),
-    linear-gradient(135deg, var(--brand-ink) 0%, #1c1829 100%);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #102028;
+  --card-foreground: var(--ink);
+  --popover: #102028;
+  --popover-foreground: var(--ink);
+  --primary: var(--seafoam);
+  --primary-foreground: #06131a;
+  --secondary: var(--shell);
+  --secondary-foreground: var(--ink);
+  --muted: var(--mute-soft);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--shell);
+  --accent-foreground: var(--pearl);
+  --destructive: var(--danger);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--seafoam);
+  --chart-1: var(--seafoam);
+  --chart-2: var(--mineral-500);
+  --chart-3: var(--teal-700);
+  --chart-4: var(--pearl);
+  --chart-5: var(--ink-faint);
+  --sidebar: #061319;
+  --sidebar-foreground: var(--pearl);
+  --sidebar-primary: var(--seafoam);
+  --sidebar-primary-foreground: #06131a;
+  --sidebar-accent: color-mix(in oklch, var(--pearl), transparent 92%);
+  --sidebar-accent-foreground: var(--pearl);
+  --sidebar-border: color-mix(in oklch, var(--pearl), transparent 90%);
+  --sidebar-ring: var(--seafoam);
+
+  --app-gradient: linear-gradient(180deg, var(--paper) 0%, var(--paper) 100%);
 }
 
 @layer base {
